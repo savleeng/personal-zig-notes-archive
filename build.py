@@ -13,6 +13,7 @@ PROJECT_DIR: Path = Path.home() / 'Projects' / 'personal-zig-notes-archive'
 Process: TypeAlias = CompletedProcess | CalledProcessError
 
 def pass_filename(filename: str) -> Path:
+    filename = (Path(filename)).name
     if not filename.endswith(".zig"):
         filename += ".zig"
     src_file: Path = PROJECT_DIR / 'src' / filename
