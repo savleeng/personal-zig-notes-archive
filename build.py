@@ -32,6 +32,7 @@ def zig_build_exe_repr(captured_output: Process) -> tuple[int, tuple[str, str]]:
 def zig_build_exe(src_file: Path) -> tuple[int, tuple[str, str]]:
     try:
         cwd: Path = Path.cwd()
+        # TODO: Avoid changing the global state by changing directories
         os.chdir(PROJECT_DIR)
         exe: Process = subprocess.run(['zig', 'build-exe', src_file], capture_output=True, check=True)
     except CalledProcessError as e:
@@ -65,9 +66,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     # in the current working directory by default.
     old_bin_file = PROJECT_DIR / src_file.stem
     new_bin_file = PROJECT_DIR / 'zig-out' / 'bin' / src_file.stem
+    (new_bin_file.parent).mkdir(parents=True, exist_ok=True)
 
     old_obj_file = PROJECT_DIR / (src_file.stem + '.o')
     new_obj_file = PROJECT_DIR / 'zig-out' / 'shared' / (src_file.stem + '.o')
+    (new_obj_file.parent).mkdir(parents=True, exist_ok=True)
+
 
     # .replace() preferred over .rename() because overwriting is not a concern.
     old_bin_file.replace(new_bin_file)
