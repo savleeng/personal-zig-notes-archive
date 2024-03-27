@@ -34,10 +34,8 @@ def zig_build_exe(src_file: Path) -> tuple[int, tuple[str, str]]:
         os.chdir(PROJECT_DIR)
         exe: Process = subprocess.run(['zig', 'build-exe', src_file], capture_output=True, check=True)
     except CalledProcessError as e:
-        os.chdir(cwd)
         return zig_build_exe_repr(e)
     else:
-        os.chdir(cwd)
         return zig_build_exe_repr(exe)
     finally:
         os.chdir(cwd)
