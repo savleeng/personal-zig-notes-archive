@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -29,11 +30,17 @@ def zig_build_exe_repr(captured_output: Process) -> tuple[int, tuple[str, str]]:
 
 def zig_build_exe(src_file: Path) -> tuple[int, tuple[str, str]]:
     try:
+        cwd: Path = Path.cwd()
+        os.chdir(PROJECT_DIR)
         exe: Process = subprocess.run(['zig', 'build-exe', src_file], capture_output=True, check=True)
     except CalledProcessError as e:
+        os.chdir(cwd)
         return zig_build_exe_repr(e)
     else:
+        os.chdir(cwd)
         return zig_build_exe_repr(exe)
+    finally:
+        os.chdir(cwd)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -55,13 +62,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     if result[0] != 0:
         return result[0]
 
-    # Undecided on whether a build script should handle building and setting up the project
-    # or, if a different setup file should be created.
-    # Since this is a personal project and the scope is small, manual setup is okay for now.
-    old_bin_file = src_file.parent / src_file.stem
+    # Zig compiler outputs the executable and the shared object file
+    # in the current working directory by default.
+    old_bin_file = PROJECT_DIR / src_file.stem
     new_bin_file = PROJECT_DIR / 'zig-out' / 'bin' / src_file.stem
 
-    old_obj_file = src_file.parent / (src_file.stem + '.o')
+    old_obj_file = PROJECT_DIR / (src_file.stem + '.o')
     new_obj_file = PROJECT_DIR / 'zig-out' / 'shared' / (src_file.stem + '.o')
 
     # .replace() preferred over .rename() because overwriting is not a concern.
