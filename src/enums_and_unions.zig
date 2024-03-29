@@ -44,4 +44,39 @@ pub fn main() void {
 
     color = @enumFromInt(0);
     std.debug.print("color: {s}\nisRed: {}\n", .{ @tagName(color), color.isRed() });
+
+    // Using switches on enums
+    switch (color) {
+        .red => std.debug.print("It's red.\n", .{}),
+        .green => std.debug.print("It's green.\n", .{}),
+        .blue => std.debug.print("It's blue.\n", .{}),
+        // switch on non-exhaustive enum include the else prong (usually)
+        else => std.debug.print("Idk\n", .{}),
+        // https://ziglang.org/documentation/0.11.0/#enum
+        // A swtch on a non-exhaustive enum can include a `_` prong
+        // as an alternative to the `else` prong. However, it's a compile
+        // error if all the known tag name are not handled by the switch.
+    }
+
+    // Assigning the .int field of the untagged union, Number.
+    var num: Number = .{ .int = 13 };
+    std.debug.print("{}.int: {}\n", .{ @TypeOf(num), num.int });
+
+    // Re-assigning a value to Number but with .float field.
+    num = .{ .float = 3.14 };
+    std.debug.print("{}.float: {}\n", .{ @TypeOf(num), num.float });
+
+    var token: Token = .keyword_if;
+    std.debug.print("token.is(.keyword_if): {}\n", .{token.is(.keyword_if)});
+
+    // Reassigning a tagged union and capturing payload with switches
+    token = .{ .digit = 69 };
+    switch (token) {
+        .keyword_if => std.debug.print("if\n", .{}),
+        .keyword_switch => std.debug.print("switch\n", .{}),
+        .digit => |d| std.debug.print("digit: {}\n", .{d}),
+    }
+    if (token == .digit and token.digit == 69) {
+        std.debug.print("...nice\n", .{});
+    }
 }
