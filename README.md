@@ -14,3 +14,4 @@ This is also intended to be a personal motivator.
 
 - [Allocation is not Initialization](https://ziggit.dev/t/topic/3138)
 - [Unreachable](https://ziggit.dev/t/topic/3653)
+- [How to Add Buffering to a Reader / Writer in Zig](https://zig.news/kristoff/how-to-add-buffering-to-a-writer-reader-in-zig-7jd)
