@@ -124,19 +124,42 @@ fn sentinelTerminatedPointer() void {
     std.debug.print("@ptrFromInt: addr_ptr[1]: {}, type: {}\n", .{ addr_ptr[1], @TypeOf(addr_ptr) });
 }
 
+fn optionalPointer() void {
+
+    // User an optional pointer if functionality similar to C's null pointer is wanted.
+    var arr = [_]u8{ 1, 2, 3, 4, 5, 6 };
+    arr[4] = 0;
+    const arr_ptr: [*:0]const u8 = arr[1..4 :0];
+    const addr = @intFromPtr(arr_ptr);
+    std.debug.print("@TypeOf(addr): {}\n", .{@TypeOf(addr)});
+
+    // In Zig, pointers cannot be null. Declare an optional pointer with null value as such:
+    var opt_ptr: ?*const usize = null;
+    std.debug.print("opt_ptr: {?}, @TypeOf(opt_ptr): {}\n", .{ opt_ptr, @TypeOf(opt_ptr) });
+
+    opt_ptr = &addr;
+    std.debug.print("opt_ptr.?.*: {}, @TypeOf(opt_ptr): {}\n", .{ opt_ptr.?.*, @TypeOf(opt_ptr) });
+
+    std.debug.print("\nThe size of an optional pointer is the same as the size of a normal pointer.\n", .{});
+    std.debug.print("@sizeOf(@TypeOf(opt_ptr)): {}, @sizeOf(*usize): {}\n", .{ @sizeOf(@TypeOf(opt_ptr)), @sizeOf(*usize) });
+}
+
 pub fn main() void {
-    std.debug.print("==Single Item Pointer==\n", .{});
+    std.debug.print("== Single Item Pointer ==\n", .{});
     singleItemPointer();
 
-    std.debug.print("\n==Pointer Assignment==\n", .{});
+    std.debug.print("\n== Pointer Assignment ==\n", .{});
     pointerAssignment();
 
-    std.debug.print("\n==Multi-Item Pointer==\n", .{});
+    std.debug.print("\n== Multi-Item Pointer ==\n", .{});
     multiItemPointer();
 
-    std.debug.print("\n==Pointer to an Array==\n", .{});
+    std.debug.print("\n== Pointer to an Array ==\n", .{});
     pointerToArray();
 
-    std.debug.print("\n==Sentinel-Terminated Pointer==\n", .{});
+    std.debug.print("\n== Sentinel-Terminated Pointer ==\n", .{});
     sentinelTerminatedPointer();
+
+    std.debug.print("\n== Optional Pointer ==\n", .{});
+    optionalPointer();
 }
